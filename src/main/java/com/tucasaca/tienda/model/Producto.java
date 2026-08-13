@@ -1,10 +1,14 @@
 package com.tucasaca.tienda.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "productos")
 public class Producto {
 
@@ -12,13 +16,22 @@ public class Producto {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 100)
-	private String nombre;
+	@Column(name = "equipo", nullable = false, length = 100)
+	private String equipo;
 
-	@Column(length = 500)
-	private String descripcion;
+	@Column(name = "liga", length = 100)
+	private String liga;
 
-	@Column(nullable = false, precision = 10, scale = 2)
+	@Column(name = "anio")
+	private Integer anio;
+
+	@Column(name = "jugador", length = 100)
+	private String jugador;
+
+	@Column(name = "numero")
+	private Integer numero;
+
+	@Column(name = "precio", nullable = false, precision = 10, scale = 2)
 	private BigDecimal precio;
 
 	@Column(name = "imagen_url", length = 255)
