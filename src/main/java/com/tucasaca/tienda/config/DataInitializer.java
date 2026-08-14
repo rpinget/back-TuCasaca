@@ -21,9 +21,9 @@ public class DataInitializer {
             }
 
             List<Casaca> camisetas = List.of(
-                    crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Ortigoza", 20),
-                    crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Mercier", 5),
-                    crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Romagnoli", 10));
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Ortigoza", 20),
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Mercier", 5),
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Romagnoli", 10));
 
             casacaRepository.saveAll(camisetas);
         };
