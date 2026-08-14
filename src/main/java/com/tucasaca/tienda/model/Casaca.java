@@ -16,7 +16,7 @@ public class Casaca {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "equipo", nullable = false, length = 100)
+	@Column(name = "equipo", nullable = false, length = 150)
 	private String equipo;
 
 	@Column(name = "liga", length = 100)
