@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "productos")
-public class Producto {
+@Table(name = "casacas")
+public class Casaca {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
