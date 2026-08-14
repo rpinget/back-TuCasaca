@@ -31,6 +31,9 @@ public class Casaca {
 	@Column(name = "numero")
 	private Integer numero;
 
+	@Column(name = "talle", length = 10)
+	private String talle;
+
 	@Column(name = "precio", nullable = false, precision = 10, scale = 2)
 	private BigDecimal precio;
 

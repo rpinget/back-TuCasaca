@@ -21,21 +21,22 @@ public class DataInitializer {
             }
 
             List<Casaca> camisetas = List.of(
-                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Ortigoza", 20),
-                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Mercier", 5),
-                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Romagnoli", 10));
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Ortigoza", 20, "S"),
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Mercier", 5, "M"),
+                    crearCamiseta("San Lorenzo", "Argentina", 2014, "Romagnoli", 10, "XL"));
 
             casacaRepository.saveAll(camisetas);
         };
     }
 
-    private Casaca crearCamiseta(String equipo, String liga, Integer anio, String jugador, Integer numero) {
+    private Casaca crearCamiseta(String equipo, String liga, Integer anio, String jugador, Integer numero, String talle) {
         Casaca casaca = new Casaca();
         casaca.setEquipo(equipo);
         casaca.setLiga(liga);
         casaca.setAnio(anio);
         casaca.setJugador(jugador);
         casaca.setNumero(numero);
+        casaca.setTalle(talle);
         casaca.setPrecio(BigDecimal.valueOf(50 + (Math.random() * 100)));
         casaca.setImagenUrl("https://example.com/camisetas/" + equipo.replace(" ", "-") + "-" + numero + ".png");
         casaca.setActivo(true);
