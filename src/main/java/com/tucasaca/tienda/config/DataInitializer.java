@@ -7,38 +7,38 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.tucasaca.tienda.model.Producto;
-import com.tucasaca.tienda.repository.ProductoRepository;
+import com.tucasaca.tienda.model.Casaca;
+import com.tucasaca.tienda.repository.CasacaRepository;
 
 @Configuration
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner seedProductos(ProductoRepository productoRepository) {
+    CommandLineRunner seedCasacas(CasacaRepository casacaRepository) {
         return args -> {
-            if (productoRepository.count() > 0) {
+            if (casacaRepository.count() > 0) {
                 return;
             }
 
-            List<Producto> camisetas = List.of(
+            List<Casaca> camisetas = List.of(
                     crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Ortigoza", 20),
                     crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Mercier", 5),
                     crearCamiseta("San Lorenzo", "Liga Profesional Argentina", 2014, "Romagnoli", 10));
 
-            productoRepository.saveAll(camisetas);
+            casacaRepository.saveAll(camisetas);
         };
     }
 
-    private Producto crearCamiseta(String equipo, String liga, Integer anio, String jugador, Integer numero) {
-        Producto producto = new Producto();
-        producto.setEquipo(equipo);
-        producto.setLiga(liga);
-        producto.setAnio(anio);
-        producto.setJugador(jugador);
-        producto.setNumero(numero);
-        producto.setPrecio(BigDecimal.valueOf(50 + (Math.random() * 100)));
-        producto.setImagenUrl("https://example.com/camisetas/" + equipo.replace(" ", "-") + "-" + numero + ".png");
-        producto.setActivo(true);
-        return producto;
+    private Casaca crearCamiseta(String equipo, String liga, Integer anio, String jugador, Integer numero) {
+        Casaca casaca = new Casaca();
+        casaca.setEquipo(equipo);
+        casaca.setLiga(liga);
+        casaca.setAnio(anio);
+        casaca.setJugador(jugador);
+        casaca.setNumero(numero);
+        casaca.setPrecio(BigDecimal.valueOf(50 + (Math.random() * 100)));
+        casaca.setImagenUrl("https://example.com/camisetas/" + equipo.replace(" ", "-") + "-" + numero + ".png");
+        casaca.setActivo(true);
+        return casaca;
     }
 }
