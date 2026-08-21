@@ -8,7 +8,11 @@ import com.tucasaca.tienda.model.Casaca;
 
 public interface CasacaRepository extends JpaRepository<Casaca, Long> {
 
-    List<Casaca> findByEquipo(String equipo);
+    List<Casaca> findByEquipoNombre(String equipo);
 
-    List<Casaca> findByEquipoContainingIgnoreCase(String equipo);
+    List<Casaca> findByEquipoNombreContainingIgnoreCase(String equipo);
+
+    List<Casaca> findByLigaId(Long ligaId);
+
+    List<Casaca> findByLigaNombreContainingIgnoreCase(String ligaNombre);
 }

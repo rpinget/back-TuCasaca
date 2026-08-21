@@ -1,14 +1,27 @@
 package com.tucasaca.tienda.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Entity
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "casacas")
 public class Casaca {
 
@@ -16,11 +29,15 @@ public class Casaca {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "equipo", nullable = false, length = 150)
-	private String equipo;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "equipo_id")
+	@JsonIgnoreProperties("casacas")
+	private Equipo equipo;
 
-	@Column(name = "liga", length = 100)
-	private String liga;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "liga_id")
+	@JsonIgnoreProperties("casacas")
+	private Liga liga;
 
 	@Column(name = "anio")
 	private Integer anio;
