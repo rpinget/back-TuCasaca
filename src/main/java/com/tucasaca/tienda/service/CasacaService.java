@@ -3,6 +3,7 @@ package com.tucasaca.tienda.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tucasaca.tienda.dto.CasacaDTO;
 import com.tucasaca.tienda.dto.CasacaRequestDTO;
@@ -15,6 +16,7 @@ import com.tucasaca.tienda.repository.EquipoRepository;
 import com.tucasaca.tienda.repository.LigaRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class CasacaService {
 
     private final CasacaRepository casacaRepository;
@@ -63,6 +65,7 @@ public class CasacaService {
                 .toList();
     }
 
+    @Transactional
     public CasacaDTO saveCasaca(CasacaRequestDTO requestDTO) {
         Equipo equipo = null;
         if (requestDTO.getEquipoId() != null) {
@@ -77,5 +80,57 @@ public class CasacaService {
         Casaca entity = casacaMapper.toEntity(requestDTO, equipo, liga);
         Casaca savedEntity = casacaRepository.save(entity);
         return casacaMapper.toDTO(savedEntity);
+    }
+
+    @Transactional
+    public CasacaDTO updateCasaca(Long id, CasacaRequestDTO requestDTO) {
+        Casaca casaca = casacaRepository.findById(id).orElse(null);
+        if (casaca == null) {
+            return null;
+        }
+
+        if (requestDTO.getEquipoId() != null) {
+            Equipo equipo = equipoRepository.findById(requestDTO.getEquipoId()).orElse(null);
+            casaca.setEquipo(equipo);
+        }
+
+        if (requestDTO.getLigaId() != null) {
+            Liga liga = ligaRepository.findById(requestDTO.getLigaId()).orElse(null);
+            casaca.setLiga(liga);
+        }
+
+        if (requestDTO.getAnio() != null) {
+            casaca.setAnio(requestDTO.getAnio());
+        }
+        if (requestDTO.getJugador() != null) {
+            casaca.setJugador(requestDTO.getJugador());
+        }
+        if (requestDTO.getNumero() != null) {
+            casaca.setNumero(requestDTO.getNumero());
+        }
+        if (requestDTO.getTalle() != null) {
+            casaca.setTalle(requestDTO.getTalle());
+        }
+        if (requestDTO.getPrecio() != null) {
+            casaca.setPrecio(requestDTO.getPrecio());
+        }
+        if (requestDTO.getImagenUrl() != null) {
+            casaca.setImagenUrl(requestDTO.getImagenUrl());
+        }
+        if (requestDTO.getActivo() != null) {
+            casaca.setActivo(requestDTO.getActivo());
+        }
+
+        Casaca updatedEntity = casacaRepository.save(casaca);
+        return casacaMapper.toDTO(updatedEntity);
+    }
+
+    @Transactional
+    public boolean deleteCasaca(Long id) {
+        if (!casacaRepository.existsById(id)) {
+            return false;
+        }
+        casacaRepository.deleteById(id);
+        return true;
     }
 }

@@ -1,15 +1,18 @@
 package com.tucasaca.tienda.controller;
 
+import java.net.URI;
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.tucasaca.tienda.dto.CasacaDTO;
 import com.tucasaca.tienda.dto.CasacaRequestDTO;
@@ -22,44 +25,74 @@ public class CasacaController {
 
     private final CasacaService casacaService;
 
-    CasacaController(CasacaService casacaService) {
+    public CasacaController(CasacaService casacaService) {
         this.casacaService = casacaService;
     }
 
-    // get http://localhost:8080/api/casacas
+    // GET http://localhost:8080/api/casacas
     @GetMapping
-    public List<CasacaDTO> getAllCasacas() {
-        return casacaService.getAllCasacas();
+    public ResponseEntity<List<CasacaDTO>> getAllCasacas() {
+        return ResponseEntity.ok(casacaService.getAllCasacas());
     }
 
-    // get http://localhost:8080/api/casacas/1
+    // GET http://localhost:8080/api/casacas/1
     @GetMapping("/{id}")
-    public CasacaDTO getCasacaById(@PathVariable Long id) {
-        return casacaService.getCasacaById(id);
+    public ResponseEntity<CasacaDTO> getCasacaById(@PathVariable Long id) {
+        CasacaDTO casaca = casacaService.getCasacaById(id);
+        if (casaca == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(casaca);
     }
 
-    // get http://localhost:8080/api/casacas/equipo/San Lorenzo
+    // GET http://localhost:8080/api/casacas/equipo/San Lorenzo
     @GetMapping("/equipo/{equipo}")
-    public List<CasacaDTO> getCasacasByEquipo(@PathVariable String equipo) {
-        return casacaService.getCasacasByEquipo(equipo);
+    public ResponseEntity<List<CasacaDTO>> getCasacasByEquipo(@PathVariable String equipo) {
+        return ResponseEntity.ok(casacaService.getCasacasByEquipo(equipo));
     }
 
-    // get http://localhost:8080/api/casacas/liga/1
+    // GET http://localhost:8080/api/casacas/liga/1
     @GetMapping("/liga/{ligaId}")
-    public List<CasacaDTO> getCasacasByLiga(@PathVariable Long ligaId) {
-        return casacaService.getCasacasByLiga(ligaId);
+    public ResponseEntity<List<CasacaDTO>> getCasacasByLiga(@PathVariable Long ligaId) {
+        return ResponseEntity.ok(casacaService.getCasacasByLiga(ligaId));
     }
 
-    // get http://localhost:8080/api/casacas/liga/nombre/Liga Profesional
+    // GET http://localhost:8080/api/casacas/liga/nombre/Liga Profesional
     @GetMapping("/liga/nombre/{nombre}")
-    public List<CasacaDTO> getCasacasByLigaNombre(@PathVariable String nombre) {
-        return casacaService.getCasacasByLigaNombre(nombre);
+    public ResponseEntity<List<CasacaDTO>> getCasacasByLigaNombre(@PathVariable String nombre) {
+        return ResponseEntity.ok(casacaService.getCasacasByLigaNombre(nombre));
     }
 
-    // post http://localhost:8080/api/casacas
+    // POST http://localhost:8080/api/casacas
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public CasacaDTO createCasaca(@RequestBody CasacaRequestDTO casacaRequestDTO) {
-        return casacaService.saveCasaca(casacaRequestDTO);
+    public ResponseEntity<CasacaDTO> createCasaca(@RequestBody CasacaRequestDTO casacaRequestDTO) {
+        CasacaDTO nuevaCasaca = casacaService.saveCasaca(casacaRequestDTO);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(nuevaCasaca.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(nuevaCasaca);
+    }
+
+    // PUT http://localhost:8080/api/casacas/1
+    @PutMapping("/{id}")
+    public ResponseEntity<CasacaDTO> updateCasaca(
+            @PathVariable Long id,
+            @RequestBody CasacaRequestDTO casacaRequestDTO) {
+        CasacaDTO casacaActualizada = casacaService.updateCasaca(id, casacaRequestDTO);
+        if (casacaActualizada == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(casacaActualizada);
+    }
+
+    // DELETE http://localhost:8080/api/casacas/1
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCasaca(@PathVariable Long id) {
+        boolean eliminado = casacaService.deleteCasaca(id);
+        if (!eliminado) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.noContent().build();
     }
 }
