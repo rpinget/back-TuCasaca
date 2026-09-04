@@ -38,11 +38,7 @@ public class CasacaController {
     // GET http://localhost:8080/api/casacas/1
     @GetMapping("/{id}")
     public ResponseEntity<CasacaDTO> getCasacaById(@PathVariable Long id) {
-        CasacaDTO casaca = casacaService.getCasacaById(id);
-        if (casaca == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(casaca);
+        return ResponseEntity.ok(casacaService.getCasacaById(id));
     }
 
     // GET http://localhost:8080/api/casacas/equipo/San Lorenzo
@@ -79,20 +75,13 @@ public class CasacaController {
     public ResponseEntity<CasacaDTO> updateCasaca(
             @PathVariable Long id,
             @RequestBody CasacaRequestDTO casacaRequestDTO) {
-        CasacaDTO casacaActualizada = casacaService.updateCasaca(id, casacaRequestDTO);
-        if (casacaActualizada == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(casacaActualizada);
+        return ResponseEntity.ok(casacaService.updateCasaca(id, casacaRequestDTO));
     }
 
     // DELETE http://localhost:8080/api/casacas/1
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCasaca(@PathVariable Long id) {
-        boolean eliminado = casacaService.deleteCasaca(id);
-        if (!eliminado) {
-            return ResponseEntity.notFound().build();
-        }
+        casacaService.deleteCasaca(id);
         return ResponseEntity.noContent().build();
     }
 }

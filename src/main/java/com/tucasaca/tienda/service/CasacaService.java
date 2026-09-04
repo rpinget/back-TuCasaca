@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tucasaca.tienda.dto.CasacaDTO;
 import com.tucasaca.tienda.dto.CasacaRequestDTO;
+import com.tucasaca.tienda.exception.PrecioNegativoException;
+import com.tucasaca.tienda.exception.ResourceNotFoundException;
 import com.tucasaca.tienda.mapper.CasacaMapper;
 import com.tucasaca.tienda.model.Casaca;
 import com.tucasaca.tienda.model.Equipo;
@@ -44,7 +46,7 @@ public class CasacaService {
     public CasacaDTO getCasacaById(Long id) {
         return casacaRepository.findById(id)
                 .map(casacaMapper::toDTO)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la casaca con id: " + id));
     }
 
     public List<CasacaDTO> getCasacasByEquipo(String equipo) {
@@ -67,14 +69,23 @@ public class CasacaService {
 
     @Transactional
     public CasacaDTO saveCasaca(CasacaRequestDTO requestDTO) {
+        if (requestDTO.getPrecio() != null
+                && requestDTO.getPrecio().compareTo(java.math.BigDecimal.ZERO) < 0) {
+            throw new PrecioNegativoException("El precio no puede ser negativo");
+        }
+
         Equipo equipo = null;
         if (requestDTO.getEquipoId() != null) {
-            equipo = equipoRepository.findById(requestDTO.getEquipoId()).orElse(null);
+            equipo = equipoRepository.findById(requestDTO.getEquipoId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "No se encontró el equipo con id: " + requestDTO.getEquipoId()));
         }
 
         Liga liga = null;
         if (requestDTO.getLigaId() != null) {
-            liga = ligaRepository.findById(requestDTO.getLigaId()).orElse(null);
+            liga = ligaRepository.findById(requestDTO.getLigaId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "No se encontró la liga con id: " + requestDTO.getLigaId()));
         }
 
         Casaca entity = casacaMapper.toEntity(requestDTO, equipo, liga);
@@ -84,18 +95,25 @@ public class CasacaService {
 
     @Transactional
     public CasacaDTO updateCasaca(Long id, CasacaRequestDTO requestDTO) {
-        Casaca casaca = casacaRepository.findById(id).orElse(null);
-        if (casaca == null) {
-            return null;
+        Casaca casaca = casacaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la casaca con id: " + id));
+
+        if (requestDTO.getPrecio() != null
+                && requestDTO.getPrecio().compareTo(java.math.BigDecimal.ZERO) < 0) {
+            throw new PrecioNegativoException("El precio no puede ser negativo");
         }
 
         if (requestDTO.getEquipoId() != null) {
-            Equipo equipo = equipoRepository.findById(requestDTO.getEquipoId()).orElse(null);
+            Equipo equipo = equipoRepository.findById(requestDTO.getEquipoId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "No se encontró el equipo con id: " + requestDTO.getEquipoId()));
             casaca.setEquipo(equipo);
         }
 
         if (requestDTO.getLigaId() != null) {
-            Liga liga = ligaRepository.findById(requestDTO.getLigaId()).orElse(null);
+            Liga liga = ligaRepository.findById(requestDTO.getLigaId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "No se encontró la liga con id: " + requestDTO.getLigaId()));
             casaca.setLiga(liga);
         }
 
@@ -128,7 +146,7 @@ public class CasacaService {
     @Transactional
     public boolean deleteCasaca(Long id) {
         if (!casacaRepository.existsById(id)) {
-            return false;
+            throw new ResourceNotFoundException("No se encontró la casaca con id: " + id);
         }
         casacaRepository.deleteById(id);
         return true;
