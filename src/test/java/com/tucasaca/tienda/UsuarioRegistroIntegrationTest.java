@@ -1,13 +1,16 @@
 package com.tucasaca.tienda;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
 import com.tucasaca.tienda.dto.UsuarioResponseDTO;
@@ -30,6 +33,9 @@ class UsuarioRegistroIntegrationTest {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Test
     void registraUsuarioYVerificaDatosEnBase() {
         UsuarioRegistroDTO registro = new UsuarioRegistroDTO(
@@ -50,6 +56,7 @@ class UsuarioRegistroIntegrationTest {
         assertEquals(registro.getSexo(), usuarioEnBase.getSexo());
         assertEquals("USER", usuarioEnBase.getRol());
         assertEquals(true, usuarioEnBase.getActivo());
-        assertEquals(registro.getPassword(), usuarioEnBase.getPassword());
+        assertNotEquals(registro.getPassword(), usuarioEnBase.getPassword());
+        assertTrue(passwordEncoder.matches(registro.getPassword(), usuarioEnBase.getPassword()));
     }
 }
