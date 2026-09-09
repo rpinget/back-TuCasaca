@@ -20,6 +20,8 @@ import com.tucasaca.tienda.repository.CasacaRepository;
 import com.tucasaca.tienda.repository.ItemCarritoRepository;
 import com.tucasaca.tienda.repository.UsuarioRepository;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class CarritoService {
 
@@ -28,18 +30,21 @@ public class CarritoService {
     private final CasacaRepository casacaRepository;
     private final UsuarioRepository usuarioRepository;
     private final CasacaMapper casacaMapper;
+    private final EntityManager entityManager;
 
     public CarritoService(
             CarritoRepository carritoRepository,
             ItemCarritoRepository itemCarritoRepository,
             CasacaRepository casacaRepository,
             UsuarioRepository usuarioRepository,
-            CasacaMapper casacaMapper) {
+            CasacaMapper casacaMapper,
+            EntityManager entityManager) {
         this.carritoRepository = carritoRepository;
         this.itemCarritoRepository = itemCarritoRepository;
         this.casacaRepository = casacaRepository;
         this.usuarioRepository = usuarioRepository;
         this.casacaMapper = casacaMapper;
+        this.entityManager = entityManager;
     }
 
     // Obtener o crear el carrito activo del usuario
@@ -73,7 +78,8 @@ public class CarritoService {
                 .ifPresentOrElse(item -> {
                     int nuevaCantidad = item.getCantidad() + dto.getCantidad();
                     if (casaca.getStock() < nuevaCantidad) {
-                        throw new RuntimeException("Stock insuficiente para la cantidad total. Disponible: " + casaca.getStock());
+                        throw new RuntimeException(
+                                "Stock insuficiente para la cantidad total. Disponible: " + casaca.getStock());
                     }
                     item.setCantidad(nuevaCantidad);
                     itemCarritoRepository.save(item);
@@ -88,7 +94,10 @@ public class CarritoService {
                 });
 
         carritoRepository.save(carrito);
-        return toDTO(carritoRepository.findByUsuarioIdAndEstado(usuarioId, EstadoCarrito.ACTIVO).orElseThrow());
+        entityManager.flush();
+        entityManager.clear();
+        Carrito actualizado = carritoRepository.findById(carrito.getId()).orElseThrow();
+        return toDTO(actualizado);
     }
 
     // Eliminar un ítem del carrito
