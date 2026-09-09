@@ -15,6 +15,11 @@ TuCasaca es una plataforma e-commerce orientada a la comercialización de camise
   - Registro de nuevos usuarios con información de perfil (nombre, apellido, correo electrónico, fecha de nacimiento, sexo y rol asignado).
   - Consulta y listado de usuarios del sistema.
   - Validación de unicidad de correo electrónico y restricciones de acceso.
+- **Gestión del Carrito de Compras:**
+  - Creación automática de carrito activo por usuario al realizar la primera consulta.
+  - Agregado de ítems con validación de stock disponible y cálculo de subtotales.
+  - Eliminación de ítems individuales y vaciado completo del carrito.
+  - Proceso de checkout: cierre del carrito y descuento automático de stock por ítem comprado.
 - **Poblado Inicial de Datos (Data Seeding):**
   - Carga automática de datos de prueba (`DataInitializer`) con ligas, equipos y camisetas de muestra al iniciar la aplicación en caso de encontrarse vacía.
 
@@ -57,6 +62,15 @@ TuCasaca es una plataforma e-commerce orientada a la comercialización de camise
 | :--- | :--- | :--- |
 | `POST` | `/api/usuarios/registro` | Registra un nuevo usuario en la plataforma. |
 | `GET` | `/api/usuarios` | Lista todos los usuarios registrados. |
+
+### Carrito de Compras (`/api/carritos`)
+| Método | Endpoint | Descripción |
+| :--- | :--- | :--- |
+| `GET` | `/api/carritos/{usuarioId}` | Obtiene el carrito activo del usuario (lo crea si no existe). |
+| `POST` | `/api/carritos/{usuarioId}/items` | Agrega un ítem al carrito con validación de stock. |
+| `DELETE` | `/api/carritos/{usuarioId}/items/{itemId}` | Elimina un ítem específico del carrito. |
+| `DELETE` | `/api/carritos/{usuarioId}/vaciar` | Elimina todos los ítems del carrito. |
+| `POST` | `/api/carritos/{usuarioId}/checkout` | Confirma la compra, cierra el carrito y descuenta el stock. |
 
 ---
 
