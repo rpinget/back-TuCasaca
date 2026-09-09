@@ -87,7 +87,8 @@ public class CarritoService {
                     carrito.getItems().add(nuevoItem);
                 });
 
-        return toDTO(carritoRepository.save(carrito));
+        carritoRepository.save(carrito);
+        return toDTO(carritoRepository.findByUsuarioIdAndEstado(usuarioId, EstadoCarrito.ACTIVO).orElseThrow());
     }
 
     // Eliminar un ítem del carrito
