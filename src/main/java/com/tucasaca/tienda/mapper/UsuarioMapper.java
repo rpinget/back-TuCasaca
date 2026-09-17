@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
 import com.tucasaca.tienda.dto.UsuarioResponseDTO;
+import com.tucasaca.tienda.model.Role;
 import com.tucasaca.tienda.model.Usuario;
 
 @Component
@@ -21,6 +22,7 @@ public class UsuarioMapper {
         usuario.setPassword(dto.getPassword());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
         usuario.setSexo(dto.getSexo());
+        usuario.setRole(Role.USER);
         return usuario;
     }
 
@@ -36,7 +38,7 @@ public class UsuarioMapper {
                 usuario.getEmail(),
                 usuario.getFechaNacimiento(),
                 usuario.getSexo(),
-                usuario.getRol(),
+                usuario.getRole() != null ? usuario.getRole().name() : "USER",
                 usuario.getActivo(),
                 usuario.getFechaCreacion());
     }

@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> manejarErroresGenerales(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + ex.getMessage());
     }
+
+    @ExceptionHandler(EmailDuplicadoException.class)
+    public ResponseEntity<String> manejarEmailDuplicado(EmailDuplicadoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

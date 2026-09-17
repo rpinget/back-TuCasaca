@@ -48,7 +48,7 @@ class UsuarioRegistroIntegrationTest {
         Usuario usuarioEnBase = usuarioRepository.findByEmail(registro.getEmail()).orElseThrow();
         assertEquals(registro.getFechaNacimiento(), usuarioEnBase.getFechaNacimiento());
         assertEquals(registro.getSexo(), usuarioEnBase.getSexo());
-        assertEquals("USER", usuarioEnBase.getRol());
+        assertEquals("USER", usuarioEnBase.getRole().name());
         assertEquals(true, usuarioEnBase.getActivo());
         assertEquals(registro.getPassword(), usuarioEnBase.getPassword());
     }
