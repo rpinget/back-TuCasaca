@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
 import com.tucasaca.tienda.dto.UsuarioResponseDTO;
+import com.tucasaca.tienda.model.Role;
 import com.tucasaca.tienda.model.Usuario;
 import com.tucasaca.tienda.repository.UsuarioRepository;
 import com.tucasaca.tienda.service.UsuarioService;
@@ -48,7 +49,7 @@ class UsuarioRegistroIntegrationTest {
         Usuario usuarioEnBase = usuarioRepository.findByEmail(registro.getEmail()).orElseThrow();
         assertEquals(registro.getFechaNacimiento(), usuarioEnBase.getFechaNacimiento());
         assertEquals(registro.getSexo(), usuarioEnBase.getSexo());
-        assertEquals("USER", usuarioEnBase.getRol());
+        assertEquals(Role.USUARIO, usuarioEnBase.getRol());
         assertEquals(true, usuarioEnBase.getActivo());
         assertEquals(registro.getPassword(), usuarioEnBase.getPassword());
     }
