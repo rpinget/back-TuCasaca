@@ -57,6 +57,7 @@ public class DataInitializer {
         casaca.setPrecio(BigDecimal.valueOf(50 + (Math.random() * 100)));
         casaca.setImagenUrl("https://example.com/camisetas/" + equipo.getNombre().replace(" ", "-") + "-" + numero + ".png");
         casaca.setActivo(true);
+        casaca.setStock(10);
         return casaca;
     }
 }

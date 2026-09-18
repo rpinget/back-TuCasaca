@@ -25,42 +25,44 @@ import lombok.NoArgsConstructor;
 @Table(name = "casacas")
 public class Casaca {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "equipo_id")
-	@JsonIgnoreProperties("casacas")
-	private Equipo equipo;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "equipo_id")
+    @JsonIgnoreProperties("casacas")
+    private Equipo equipo;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "liga_id")
-	@JsonIgnoreProperties("casacas")
-	private Liga liga;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "liga_id")
+    @JsonIgnoreProperties("casacas")
+    private Liga liga;
 
-	@Column(name = "anio")
-	private Integer anio;
+    @Column(name = "anio")
+    private Integer anio;
 
-	@Column(name = "jugador", length = 100)
-	private String jugador;
+    @Column(name = "jugador", length = 100)
+    private String jugador;
 
-	@Column(name = "numero")
-	private Integer numero;
+    @Column(name = "numero")
+    private Integer numero;
 
-	@Column(name = "talle", length = 10)
-	private String talle;
+    @Column(name = "talle", length = 10)
+    private String talle;
 
-	@Column(name = "precio", nullable = false, precision = 10, scale = 2)
-	private BigDecimal precio;
+    @Column(name = "precio", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precio;
 
-	@Column(name = "imagen_url", length = 255)
-	private String imagenUrl;
+    @Column(name = "stock", nullable = false)
+    private Integer stock = 0;
 
-	@Column(nullable = false)
-	private Boolean activo = true;
+    @Column(name = "imagen_url", length = 255)
+    private String imagenUrl;
 
-	@Column(name = "fecha_creacion", nullable = false, updatable = false)
-	private LocalDateTime fechaCreacion = LocalDateTime.now();
+    @Column(nullable = false)
+    private Boolean activo = true;
 
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private LocalDateTime fechaCreacion = LocalDateTime.now();
 }
