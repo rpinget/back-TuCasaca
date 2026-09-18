@@ -3,6 +3,8 @@ package com.tucasaca.tienda.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.tucasaca.tienda.model.Role;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ public class UsuarioResponseDTO {
     private String email;
     private LocalDate fechaNacimiento;
     private String sexo;
-    private String rol;
+    private Role rol;
     private Boolean activo;
     private LocalDateTime fechaCreacion;
 }

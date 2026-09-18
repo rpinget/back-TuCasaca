@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
 import com.tucasaca.tienda.dto.UsuarioResponseDTO;
+import com.tucasaca.tienda.exception.ResourceNotFoundException;
 import com.tucasaca.tienda.mapper.UsuarioMapper;
 import com.tucasaca.tienda.model.Usuario;
 import com.tucasaca.tienda.repository.UsuarioRepository;
@@ -40,5 +41,11 @@ public class UsuarioService {
         return usuarioRepository.findAll().stream()
                 .map(usuarioMapper::toResponseDTO)
                 .toList();
+    }
+
+    public void eliminarUsuario(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
+        usuarioRepository.delete(usuario);
     }
 }
