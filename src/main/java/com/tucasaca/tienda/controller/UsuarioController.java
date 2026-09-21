@@ -28,7 +28,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/registro")
-    public ResponseEntity<UsuarioResponseDTO> registrarUsuario(@RequestBody UsuarioRegistroDTO registroDTO) {
+    public ResponseEntity<UsuarioResponseDTO> registrarUsuario(@jakarta.validation.Valid @RequestBody UsuarioRegistroDTO registroDTO) {
         UsuarioResponseDTO usuario = usuarioService.registrarUsuario(registroDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }

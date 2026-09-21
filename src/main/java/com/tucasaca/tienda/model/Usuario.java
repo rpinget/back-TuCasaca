@@ -32,6 +32,9 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "nombre_usuario", unique = true, length = 50)
+    private String nombreUsuario;
+
     private String nombre;
 
     private String apellido;

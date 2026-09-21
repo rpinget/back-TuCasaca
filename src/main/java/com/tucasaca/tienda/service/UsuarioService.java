@@ -27,6 +27,10 @@ public class UsuarioService {
     }
 
     public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO registroDTO) {
+        if (registroDTO.getNombreUsuario() != null && usuarioRepository.existsByNombreUsuario(registroDTO.getNombreUsuario())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está registrado");
+        }
+
         if (usuarioRepository.existsByEmail(registroDTO.getEmail())) {
             throw new IllegalArgumentException("El email ya está registrado");
         }

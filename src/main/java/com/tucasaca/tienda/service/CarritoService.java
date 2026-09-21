@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.tucasaca.tienda.dto.AgregarItemDTO;
 import com.tucasaca.tienda.dto.CarritoDTO;
 import com.tucasaca.tienda.dto.ItemCarritoDTO;
+import com.tucasaca.tienda.exception.CarritoVacioException;
+import com.tucasaca.tienda.exception.OperacionNoPermitidaException;
+import com.tucasaca.tienda.exception.ResourceNotFoundException;
+import com.tucasaca.tienda.exception.StockInsuficienteException;
 import com.tucasaca.tienda.mapper.CasacaMapper;
 import com.tucasaca.tienda.model.Carrito;
 import com.tucasaca.tienda.model.Carrito.EstadoCarrito;
@@ -47,6 +51,17 @@ public class CarritoService {
         this.entityManager = entityManager;
     }
 
+    public void validarAccesoUsuario(Long usuarioId, String authenticatedEmail, boolean isAdmin) {
+        if (authenticatedEmail == null || isAdmin) {
+            return;
+        }
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", usuarioId));
+        if (!usuario.getEmail().equalsIgnoreCase(authenticatedEmail)) {
+            throw new OperacionNoPermitidaException("No tienes permiso para acceder al carrito de otro usuario");
+        }
+    }
+
     // Obtener o crear el carrito activo del usuario
     @Transactional
     public CarritoDTO obtenerCarrito(Long usuarioId) {
@@ -60,13 +75,13 @@ public class CarritoService {
     @Transactional
     public CarritoDTO agregarItem(Long usuarioId, AgregarItemDTO dto) {
         Casaca casaca = casacaRepository.findById(dto.getCasacaId())
-                .orElseThrow(() -> new RuntimeException("Casaca no encontrada: " + dto.getCasacaId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Casaca", dto.getCasacaId()));
 
         if (!casaca.getActivo()) {
-            throw new RuntimeException("La casaca no está disponible");
+            throw new StockInsuficienteException("La casaca no está disponible");
         }
         if (casaca.getStock() < dto.getCantidad()) {
-            throw new RuntimeException("Stock insuficiente. Disponible: " + casaca.getStock());
+            throw new StockInsuficienteException("Stock insuficiente. Disponible: " + casaca.getStock());
         }
 
         Carrito carrito = carritoRepository
@@ -78,7 +93,7 @@ public class CarritoService {
                 .ifPresentOrElse(item -> {
                     int nuevaCantidad = item.getCantidad() + dto.getCantidad();
                     if (casaca.getStock() < nuevaCantidad) {
-                        throw new RuntimeException(
+                        throw new StockInsuficienteException(
                                 "Stock insuficiente para la cantidad total. Disponible: " + casaca.getStock());
                     }
                     item.setCantidad(nuevaCantidad);
@@ -105,10 +120,10 @@ public class CarritoService {
     public CarritoDTO eliminarItem(Long usuarioId, Long itemId) {
         Carrito carrito = carritoRepository
                 .findByUsuarioIdAndEstado(usuarioId, EstadoCarrito.ACTIVO)
-                .orElseThrow(() -> new RuntimeException("No hay carrito activo para el usuario: " + usuarioId));
+                .orElseThrow(() -> new ResourceNotFoundException("No hay carrito activo para el usuario con id: " + usuarioId));
 
         ItemCarrito item = itemCarritoRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Ítem no encontrado: " + itemId));
+                .orElseThrow(() -> new ResourceNotFoundException("ItemCarrito", itemId));
 
         carrito.getItems().remove(item);
         itemCarritoRepository.delete(item);
@@ -120,7 +135,7 @@ public class CarritoService {
     public CarritoDTO vaciarCarrito(Long usuarioId) {
         Carrito carrito = carritoRepository
                 .findByUsuarioIdAndEstado(usuarioId, EstadoCarrito.ACTIVO)
-                .orElseThrow(() -> new RuntimeException("No hay carrito activo para el usuario: " + usuarioId));
+                .orElseThrow(() -> new ResourceNotFoundException("No hay carrito activo para el usuario con id: " + usuarioId));
 
         carrito.getItems().clear();
         return toDTO(carritoRepository.save(carrito));
@@ -131,17 +146,17 @@ public class CarritoService {
     public CarritoDTO checkout(Long usuarioId) {
         Carrito carrito = carritoRepository
                 .findByUsuarioIdAndEstado(usuarioId, EstadoCarrito.ACTIVO)
-                .orElseThrow(() -> new RuntimeException("No hay carrito activo para el usuario: " + usuarioId));
+                .orElseThrow(() -> new ResourceNotFoundException("No hay carrito activo para el usuario con id: " + usuarioId));
 
         if (carrito.getItems().isEmpty()) {
-            throw new RuntimeException("El carrito está vacío");
+            throw new CarritoVacioException("El carrito está vacío");
         }
 
         // Validar stock y descontar
         for (ItemCarrito item : carrito.getItems()) {
             Casaca casaca = item.getCasaca();
             if (casaca.getStock() < item.getCantidad()) {
-                throw new RuntimeException("Stock insuficiente para: " + casaca.getJugador()
+                throw new StockInsuficienteException("Stock insuficiente para: " + casaca.getJugador()
                         + " #" + casaca.getNumero() + ". Disponible: " + casaca.getStock());
             }
             casaca.setStock(casaca.getStock() - item.getCantidad());
@@ -156,7 +171,7 @@ public class CarritoService {
 
     private Carrito crearCarritoNuevo(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + usuarioId));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", usuarioId));
         Carrito nuevo = new Carrito();
         nuevo.setUsuario(usuario);
         nuevo.setEstado(EstadoCarrito.ACTIVO);

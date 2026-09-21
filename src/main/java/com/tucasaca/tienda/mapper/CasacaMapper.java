@@ -39,6 +39,11 @@ public class CasacaMapper {
         if (entity == null) {
             return null;
         }
+        Long creadorId = entity.getCreador() != null ? entity.getCreador().getId() : null;
+        String creadorNombreUsuario = entity.getCreador() != null
+                ? (entity.getCreador().getNombreUsuario() != null ? entity.getCreador().getNombreUsuario() : entity.getCreador().getEmail())
+                : null;
+
         return new CasacaDTO(
                 entity.getId(),
                 toEquipoDTO(entity.getEquipo()),
@@ -48,7 +53,11 @@ public class CasacaMapper {
                 entity.getNumero(),
                 entity.getTalle(),
                 entity.getPrecio(),
+                entity.getStock(),
+                entity.getDescripcion(),
                 entity.getImagenUrl(),
+                creadorId,
+                creadorNombreUsuario,
                 entity.getActivo(),
                 entity.getFechaCreacion()
         );
@@ -66,6 +75,8 @@ public class CasacaMapper {
         casaca.setNumero(dto.getNumero());
         casaca.setTalle(dto.getTalle());
         casaca.setPrecio(dto.getPrecio());
+        casaca.setStock(dto.getStock() != null ? dto.getStock() : 0);
+        casaca.setDescripcion(dto.getDescripcion());
         casaca.setImagenUrl(dto.getImagenUrl());
         if (dto.getActivo() != null) {
             casaca.setActivo(dto.getActivo());

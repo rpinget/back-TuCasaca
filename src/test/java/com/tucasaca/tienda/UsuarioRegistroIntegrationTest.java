@@ -40,6 +40,7 @@ class UsuarioRegistroIntegrationTest {
     @Test
     void registraUsuarioYVerificaDatosEnBase() {
         UsuarioRegistroDTO registro = new UsuarioRegistroDTO(
+                "anatorres",
                 "Ana",
                 "Torres",
                 "ana.torres@example.com",
@@ -50,9 +51,11 @@ class UsuarioRegistroIntegrationTest {
         UsuarioResponseDTO respuesta = usuarioService.registrarUsuario(registro);
 
         assertNotNull(respuesta.getId());
+        assertEquals(registro.getNombreUsuario(), respuesta.getNombreUsuario());
         assertEquals(registro.getEmail(), respuesta.getEmail());
 
         Usuario usuarioEnBase = usuarioRepository.findByEmail(registro.getEmail()).orElseThrow();
+        assertEquals(registro.getNombreUsuario(), usuarioEnBase.getNombreUsuario());
         assertEquals(registro.getFechaNacimiento(), usuarioEnBase.getFechaNacimiento());
         assertEquals(registro.getSexo(), usuarioEnBase.getSexo());
         assertEquals(Role.USUARIO, usuarioEnBase.getRol());

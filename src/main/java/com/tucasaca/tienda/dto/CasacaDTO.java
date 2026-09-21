@@ -19,7 +19,11 @@ public class CasacaDTO {
     private Integer numero;
     private String talle;
     private BigDecimal precio;
+    private Integer stock;
+    private String descripcion;
     private String imagenUrl;
+    private Long creadorId;
+    private String creadorNombreUsuario;
     private Boolean activo;
     private LocalDateTime fechaCreacion;
 }
