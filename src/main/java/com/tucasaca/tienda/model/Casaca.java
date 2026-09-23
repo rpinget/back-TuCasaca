@@ -60,6 +60,14 @@ public class Casaca {
     @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
 
+    @Column(name = "descripcion", length = 500)
+    private String descripcion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    @JsonIgnoreProperties({ "password", "authorities" })
+    private Usuario creador;
+
     @Column(nullable = false)
     private Boolean activo = true;
 

@@ -30,6 +30,30 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
+    @ExceptionHandler(StockInsuficienteException.class)
+    public ResponseEntity<String> manejarStockInsuficiente(StockInsuficienteException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CarritoVacioException.class)
+    public ResponseEntity<String> manejarCarritoVacio(CarritoVacioException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(OperacionNoPermitidaException.class)
+    public ResponseEntity<String> manejarOperacionNoPermitida(OperacionNoPermitidaException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    public ResponseEntity<String> manejarValidaciones(org.springframework.web.bind.MethodArgumentNotValidException ex) {
+        String errores = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .reduce((a, b) -> a + "; " + b)
+                .orElse("Datos inválidos");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errores);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> manejarErroresGenerales(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + ex.getMessage());
