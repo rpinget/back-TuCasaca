@@ -118,8 +118,8 @@ public class CasacaService {
         Casaca casaca = casacaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la casaca con id: " + id));
 
-        if (userEmail != null && !isAdmin && casaca.getCreador() != null) {
-            if (!casaca.getCreador().getEmail().equalsIgnoreCase(userEmail)) {
+        if (userEmail != null && !isAdmin) {
+            if (casaca.getCreador() == null || !casaca.getCreador().getEmail().equalsIgnoreCase(userEmail)) {
                 throw new OperacionNoPermitidaException("No tienes permiso para modificar una casaca que no te pertenece");
             }
         }
@@ -185,8 +185,8 @@ public class CasacaService {
         Casaca casaca = casacaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró la casaca con id: " + id));
 
-        if (userEmail != null && !isAdmin && casaca.getCreador() != null) {
-            if (!casaca.getCreador().getEmail().equalsIgnoreCase(userEmail)) {
+        if (userEmail != null && !isAdmin) {
+            if (casaca.getCreador() == null || !casaca.getCreador().getEmail().equalsIgnoreCase(userEmail)) {
                 throw new OperacionNoPermitidaException("No tienes permiso para eliminar una casaca que no te pertenece");
             }
         }
