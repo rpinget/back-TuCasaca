@@ -50,6 +50,7 @@ public class UsuarioService {
     public void eliminarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
-        usuarioRepository.delete(usuario);
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
     }
 }
