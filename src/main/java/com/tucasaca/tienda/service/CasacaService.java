@@ -36,7 +36,7 @@ public class CasacaService {
     }
 
     public List<CasacaDTO> getAllCasacas() {
-        return casacaRepository.findAll().stream()
+        return casacaRepository.findAllByOrderByEquipoNombreAsc().stream()
                 .map(casacaMapper::toDTO)
                 .toList();
     }
@@ -54,7 +54,7 @@ public class CasacaService {
     }
 
     public List<CasacaDTO> getCasacasByLiga(Long ligaId) {
-        return casacaRepository.findByLigaId(ligaId).stream()
+        return casacaRepository.findByLigaIdOrderByEquipoNombreAsc(ligaId).stream()
                 .map(casacaMapper::toDTO)
                 .toList();
     }
