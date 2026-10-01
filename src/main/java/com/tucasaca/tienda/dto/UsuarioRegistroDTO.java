@@ -2,6 +2,8 @@ package com.tucasaca.tienda.dto;
 
 import java.time.LocalDate;
 
+import com.tucasaca.tienda.model.Sexo;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -29,5 +31,5 @@ public class UsuarioRegistroDTO {
     private String password;
 
     private LocalDate fechaNacimiento;
-    private String sexo;
+    private Sexo sexo;
 }

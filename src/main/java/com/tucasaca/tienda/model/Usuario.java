@@ -47,7 +47,9 @@ public class Usuario implements UserDetails {
 
     private LocalDate fechaNacimiento;
 
-    private String sexo;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Sexo sexo = Sexo.NO_ESPECIFICA;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -21,7 +21,9 @@ public class UsuarioMapper {
         usuario.setEmail(dto.getEmail());
         usuario.setPassword(dto.getPassword());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
-        usuario.setSexo(dto.getSexo());
+        if (dto.getSexo() != null) {
+            usuario.setSexo(dto.getSexo());
+        }
         return usuario;
     }
 

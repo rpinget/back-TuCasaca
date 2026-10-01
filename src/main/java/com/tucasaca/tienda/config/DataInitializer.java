@@ -13,6 +13,7 @@ import com.tucasaca.tienda.model.Casaca;
 import com.tucasaca.tienda.model.Equipo;
 import com.tucasaca.tienda.model.Liga;
 import com.tucasaca.tienda.model.Role;
+import com.tucasaca.tienda.model.Sexo;
 import com.tucasaca.tienda.model.Usuario;
 import com.tucasaca.tienda.repository.CasacaRepository;
 import com.tucasaca.tienda.repository.EquipoRepository;
@@ -32,16 +33,16 @@ public class DataInitializer {
         return args -> {
             Usuario admin = usuarioRepository.findByEmail("admin@tucasaca.com").orElseGet(() -> {
                 return usuarioRepository.save(crearUsuario("admin", "Admin", "TuCasaca", "admin@tucasaca.com",
-                        passwordEncoder.encode("admin123"), LocalDate.of(1990, 1, 1), "MASCULINO", Role.ADMIN, true));
+                        passwordEncoder.encode("admin123"), LocalDate.of(1990, 1, 1), Sexo.MASCULINO, Role.ADMIN, true));
             });
 
             if (usuarioRepository.findByEmail("ana.gomez@tucasaca.com").isEmpty()) {
                 String passwordUsuario = passwordEncoder.encode("usuario123");
                 List<Usuario> usuarios = List.of(
-                        crearUsuario("anagomez", "Ana", "Gomez", "ana.gomez@tucasaca.com", passwordUsuario, LocalDate.of(1995, 6, 15), "FEMENINO", Role.USUARIO, true),
-                        crearUsuario("juanperez", "Juan", "Perez", "juan.perez@tucasaca.com", passwordUsuario, LocalDate.of(1988, 3, 22), "MASCULINO", Role.USUARIO, true),
-                        crearUsuario("sofilopez", "Sofia", "Lopez", "sofia.lopez@tucasaca.com", passwordUsuario, LocalDate.of(2001, 11, 2), "FEMENINO", Role.USUARIO, true),
-                        crearUsuario("luisbaja", "Luis", "Baja", "luis.baja@tucasaca.com", passwordUsuario, LocalDate.of(1979, 8, 30), "MASCULINO", Role.USUARIO, false));
+                        crearUsuario("anagomez", "Ana", "Gomez", "ana.gomez@tucasaca.com", passwordUsuario, LocalDate.of(1995, 6, 15), Sexo.FEMENINO, Role.USUARIO, true),
+                        crearUsuario("juanperez", "Juan", "Perez", "juan.perez@tucasaca.com", passwordUsuario, LocalDate.of(1988, 3, 22), Sexo.MASCULINO, Role.USUARIO, true),
+                        crearUsuario("sofilopez", "Sofia", "Lopez", "sofia.lopez@tucasaca.com", passwordUsuario, LocalDate.of(2001, 11, 2), Sexo.FEMENINO, Role.USUARIO, true),
+                        crearUsuario("luisbaja", "Luis", "Baja", "luis.baja@tucasaca.com", passwordUsuario, LocalDate.of(1979, 8, 30), Sexo.NO_ESPECIFICA, Role.USUARIO, false));
                 usuarioRepository.saveAll(usuarios);
             }
 
@@ -87,7 +88,7 @@ public class DataInitializer {
         };
     }
 
-    private Usuario crearUsuario(String nombreUsuario, String nombre, String apellido, String email, String passwordCodificada, LocalDate fechaNacimiento, String sexo, Role rol, Boolean activo) {
+    private Usuario crearUsuario(String nombreUsuario, String nombre, String apellido, String email, String passwordCodificada, LocalDate fechaNacimiento, Sexo sexo, Role rol, Boolean activo) {
         Usuario usuario = new Usuario();
         usuario.setNombreUsuario(nombreUsuario);
         usuario.setNombre(nombre);
