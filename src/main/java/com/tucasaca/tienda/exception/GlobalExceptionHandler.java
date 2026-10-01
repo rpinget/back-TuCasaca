@@ -2,6 +2,7 @@ package com.tucasaca.tienda.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +29,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> manejarArgumentoInvalido(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    // Se dispara cuando el JSON no se puede convertir al DTO (ej: un valor de enum inexistente como sexo)
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> manejarCuerpoInvalido(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Cuerpo de la solicitud inválido. Verificá los valores enviados (ej: sexo debe ser MASCULINO, FEMENINO o NO_ESPECIFICA)");
     }
 
     @ExceptionHandler(StockInsuficienteException.class)
