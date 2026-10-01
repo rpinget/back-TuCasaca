@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
 import com.tucasaca.tienda.dto.UsuarioResponseDTO;
 import com.tucasaca.tienda.model.Role;
+import com.tucasaca.tienda.model.Sexo;
 import com.tucasaca.tienda.model.Usuario;
 import com.tucasaca.tienda.repository.UsuarioRepository;
 import com.tucasaca.tienda.service.UsuarioService;
@@ -46,7 +47,7 @@ class UsuarioRegistroIntegrationTest {
                 "ana.torres@example.com",
                 "secreto",
                 LocalDate.of(1995, 6, 15),
-                "FEMENINO");
+                Sexo.FEMENINO);
 
         UsuarioResponseDTO respuesta = usuarioService.registrarUsuario(registro);
 
