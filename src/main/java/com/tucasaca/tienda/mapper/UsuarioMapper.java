@@ -30,16 +30,17 @@ public class UsuarioMapper {
             return null;
         }
 
-        return new UsuarioResponseDTO(
-                usuario.getId(),
-                usuario.getNombreUsuario(),
-                usuario.getNombre(),
-                usuario.getApellido(),
-                usuario.getEmail(),
-                usuario.getFechaNacimiento(),
-                usuario.getSexo(),
-                usuario.getRol(),
-                usuario.getActivo(),
-                usuario.getFechaCreacion());
+        return UsuarioResponseDTO.builder()
+                .id(usuario.getId())
+                .nombreUsuario(usuario.getNombreUsuario())
+                .nombre(usuario.getNombre())
+                .apellido(usuario.getApellido())
+                .email(usuario.getEmail())
+                .fechaNacimiento(usuario.getFechaNacimiento())
+                .sexo(usuario.getSexo())
+                .rol(usuario.getRol())
+                .activo(usuario.getActivo())
+                .fechaCreacion(usuario.getFechaCreacion())
+                .build();
     }
 }
