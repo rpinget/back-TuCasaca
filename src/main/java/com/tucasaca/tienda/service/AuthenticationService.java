@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import com.tucasaca.tienda.dto.LoginRequestDTO;
+import com.tucasaca.tienda.dto.LoginResponseDTO;
 import com.tucasaca.tienda.model.Usuario;
 import com.tucasaca.tienda.repository.UsuarioRepository;
 import com.tucasaca.tienda.security.JwtUtil;
@@ -22,7 +23,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
-    public String authenticate(LoginRequestDTO request) {
+    public LoginResponseDTO authenticate(LoginRequestDTO request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -32,6 +33,14 @@ public class AuthenticationService {
                 .map(grantedAuthority -> grantedAuthority.getAuthority())
                 .collect(Collectors.toSet());
 
-        return jwtUtil.generateToken(usuario.getEmail(), roles);
+        String token = jwtUtil.generateToken(usuario.getEmail(), roles);
+
+        return new LoginResponseDTO(
+                token,
+                usuario.getId(),
+                usuario.getEmail(),
+                usuario.getNombre(),
+                usuario.getRol() != null ? usuario.getRol().name() : null
+        );
     }
 }

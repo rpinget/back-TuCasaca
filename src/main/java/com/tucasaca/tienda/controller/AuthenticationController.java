@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tucasaca.tienda.dto.LoginRequestDTO;
+import com.tucasaca.tienda.dto.LoginResponseDTO;
 import com.tucasaca.tienda.service.AuthenticationService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class AuthenticationController {
 
     // POST http://localhost:8080/api/auth/login
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 }
