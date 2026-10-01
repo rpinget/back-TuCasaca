@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import com.tucasaca.tienda.service.CasacaService;
 // http://localhost:8080/api/casacas
 @RestController
 @RequestMapping("/api/casacas")
+@CrossOrigin(origins = "*")
 public class CasacaController {
 
     private final CasacaService casacaService;
