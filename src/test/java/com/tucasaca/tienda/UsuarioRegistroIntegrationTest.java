@@ -1,0 +1,67 @@
+package com.tucasaca.tienda;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.tucasaca.tienda.dto.UsuarioRegistroDTO;
+import com.tucasaca.tienda.dto.UsuarioResponseDTO;
+import com.tucasaca.tienda.model.Role;
+import com.tucasaca.tienda.model.Sexo;
+import com.tucasaca.tienda.model.Usuario;
+import com.tucasaca.tienda.repository.UsuarioRepository;
+import com.tucasaca.tienda.service.UsuarioService;
+
+@SpringBootTest(properties = {
+        "spring.datasource.url=jdbc:h2:mem:usuarios-test;DB_CLOSE_DELAY=-1",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.datasource.username=sa",
+        "spring.datasource.password=",
+        "spring.jpa.hibernate.ddl-auto=create-drop"
+})
+class UsuarioRegistroIntegrationTest {
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Test
+    void registraUsuarioYVerificaDatosEnBase() {
+        UsuarioRegistroDTO registro = new UsuarioRegistroDTO(
+                "anatorres",
+                "Ana",
+                "Torres",
+                "ana.torres@example.com",
+                "secreto",
+                LocalDate.of(1995, 6, 15),
+                Sexo.FEMENINO);
+
+        UsuarioResponseDTO respuesta = usuarioService.registrarUsuario(registro);
+
+        assertNotNull(respuesta.getId());
+        assertEquals(registro.getNombreUsuario(), respuesta.getNombreUsuario());
+        assertEquals(registro.getEmail(), respuesta.getEmail());
+
+        Usuario usuarioEnBase = usuarioRepository.findByEmail(registro.getEmail()).orElseThrow();
+        assertEquals(registro.getNombreUsuario(), usuarioEnBase.getNombreUsuario());
+        assertEquals(registro.getFechaNacimiento(), usuarioEnBase.getFechaNacimiento());
+        assertEquals(registro.getSexo(), usuarioEnBase.getSexo());
+        assertEquals(Role.USUARIO, usuarioEnBase.getRol());
+        assertEquals(true, usuarioEnBase.getActivo());
+        assertNotEquals(registro.getPassword(), usuarioEnBase.getPassword());
+        assertTrue(passwordEncoder.matches(registro.getPassword(), usuarioEnBase.getPassword()));
+    }
+}

@@ -40,11 +40,7 @@ public class CasacaController {
     // GET http://localhost:8080/api/casacas/1
     @GetMapping("/{id}")
     public ResponseEntity<CasacaDTO> getCasacaById(@PathVariable Long id) {
-        CasacaDTO casaca = casacaService.getCasacaById(id);
-        if (casaca == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(casaca);
+        return ResponseEntity.ok(casacaService.getCasacaById(id));
     }
 
     // GET http://localhost:8080/api/casacas/equipo/San Lorenzo
@@ -67,8 +63,11 @@ public class CasacaController {
 
     // POST http://localhost:8080/api/casacas
     @PostMapping
-    public ResponseEntity<CasacaDTO> createCasaca(@RequestBody CasacaRequestDTO casacaRequestDTO) {
-        CasacaDTO nuevaCasaca = casacaService.saveCasaca(casacaRequestDTO);
+    public ResponseEntity<CasacaDTO> createCasaca(
+            @jakarta.validation.Valid @RequestBody CasacaRequestDTO casacaRequestDTO,
+            java.security.Principal principal) {
+        String email = principal != null ? principal.getName() : null;
+        CasacaDTO nuevaCasaca = casacaService.saveCasaca(casacaRequestDTO, email);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(nuevaCasaca.getId())
@@ -80,21 +79,23 @@ public class CasacaController {
     @PutMapping("/{id}")
     public ResponseEntity<CasacaDTO> updateCasaca(
             @PathVariable Long id,
-            @RequestBody CasacaRequestDTO casacaRequestDTO) {
-        CasacaDTO casacaActualizada = casacaService.updateCasaca(id, casacaRequestDTO);
-        if (casacaActualizada == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(casacaActualizada);
+            @jakarta.validation.Valid @RequestBody CasacaRequestDTO casacaRequestDTO,
+            java.security.Principal principal,
+            org.springframework.security.core.Authentication auth) {
+        String email = principal != null ? principal.getName() : null;
+        boolean isAdmin = auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        return ResponseEntity.ok(casacaService.updateCasaca(id, casacaRequestDTO, email, isAdmin));
     }
 
     // DELETE http://localhost:8080/api/casacas/1
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCasaca(@PathVariable Long id) {
-        boolean eliminado = casacaService.deleteCasaca(id);
-        if (!eliminado) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteCasaca(
+            @PathVariable Long id,
+            java.security.Principal principal,
+            org.springframework.security.core.Authentication auth) {
+        String email = principal != null ? principal.getName() : null;
+        boolean isAdmin = auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        casacaService.deleteCasaca(id, email, isAdmin);
         return ResponseEntity.noContent().build();
     }
 }
