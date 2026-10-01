@@ -14,17 +14,15 @@ public class UsuarioMapper {
             return null;
         }
 
-        Usuario usuario = new Usuario();
-        usuario.setNombreUsuario(dto.getNombreUsuario());
-        usuario.setNombre(dto.getNombre());
-        usuario.setApellido(dto.getApellido());
-        usuario.setEmail(dto.getEmail());
-        usuario.setPassword(dto.getPassword());
-        usuario.setFechaNacimiento(dto.getFechaNacimiento());
-        if (dto.getSexo() != null) {
-            usuario.setSexo(dto.getSexo());
-        }
-        return usuario;
+        return Usuario.builder()
+                .nombreUsuario(dto.getNombreUsuario())
+                .nombre(dto.getNombre())
+                .apellido(dto.getApellido())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .fechaNacimiento(dto.getFechaNacimiento())
+                .sexo(dto.getSexo())
+                .build();
     }
 
     public UsuarioResponseDTO toResponseDTO(Usuario usuario) {
