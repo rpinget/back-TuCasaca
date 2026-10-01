@@ -57,8 +57,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         // registro público (queda en /api/usuarios/registro, no bajo /api/auth)
                         .requestMatchers(HttpMethod.POST, "/api/usuarios/registro").permitAll()
-                        // cualquiera puede ver el catálogo de casacas
+                        // cualquiera puede ver el catálogo de casacas, ligas y equipos
                         .requestMatchers(HttpMethod.GET, "/api/casacas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/ligas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/equipos/**").permitAll()
                         // solo usuarios autenticados pueden crear/editar/eliminar casacas
                         .requestMatchers(HttpMethod.POST, "/api/casacas/**").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/casacas/**").authenticated()

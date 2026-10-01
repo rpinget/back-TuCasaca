@@ -53,4 +53,10 @@ public class UsuarioService {
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
     }
+
+    public UsuarioResponseDTO obtenerPerfilPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", email));
+        return usuarioMapper.toResponseDTO(usuario);
+    }
 }
