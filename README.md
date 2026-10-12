@@ -45,32 +45,66 @@ TuCasaca es una plataforma e-commerce orientada a la comercialización de camise
 
 ## Endpoints de la API
 
+### Autenticación (`/api/auth`)
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Inicia sesión y devuelve JWT con datos del usuario (`LoginResponseDTO`). | Público |
+
+### Categorías / Ligas (`/api/ligas`)
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/ligas` | Lista todas las ligas/categorías disponibles. | Público |
+| `GET` | `/api/ligas/{id}` | Obtiene el detalle de una liga por ID. | Público |
+
+### Equipos / Clubes (`/api/equipos`)
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/equipos` | Lista todos los clubes/equipos registrados. | Público |
+| `GET` | `/api/equipos/{id}` | Obtiene el detalle de un equipo por ID. | Público |
+| `GET` | `/api/equipos/liga/{ligaId}` | Filtra equipos pertenecientes a una liga específica. | Público |
+
 ### Camisetas (`/api/casacas`)
-| Método | Endpoint | Descripción |
-| :--- | :--- | :--- |
-| `GET` | `/api/casacas` | Obtiene el listado completo de camisetas activas. |
-| `GET` | `/api/casacas/{id}` | Obtiene el detalle de una camiseta por su ID. |
-| `GET` | `/api/casacas/equipo/{equipo}` | Filtra camisetas por el nombre del equipo. |
-| `GET` | `/api/casacas/liga/{ligaId}` | Filtra camisetas por el ID de la liga. |
-| `GET` | `/api/casacas/liga/nombre/{nombre}` | Filtra camisetas por el nombre de la liga. |
-| `POST` | `/api/casacas` | Registra una nueva camiseta en el catálogo. |
-| `PUT` | `/api/casacas/{id}` | Actualiza la información de una camiseta existente. |
-| `DELETE` | `/api/casacas/{id}` | Elimina una camiseta del catálogo por su ID. |
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/casacas` | Obtiene el catálogo completo ordenado alfabéticamente. | Público |
+| `GET` | `/api/casacas/{id}` | Obtiene el detalle de una camiseta por su ID. | Público |
+| `GET` | `/api/casacas/equipo/{equipo}` | Filtra camisetas por el nombre del equipo. | Público |
+| `GET` | `/api/casacas/liga/{ligaId}` | Filtra camisetas por el ID de la liga. | Público |
+| `GET` | `/api/casacas/liga/nombre/{nombre}` | Filtra camisetas por el nombre de la liga. | Público |
+| `POST` | `/api/casacas` | Publica una nueva camiseta en el catálogo. | Autenticado |
+| `PUT` | `/api/casacas/{id}` | Actualiza información de una camiseta (creador o ADMIN). | Autenticado |
+| `DELETE` | `/api/casacas/{id}` | Elimina una camiseta del catálogo (creador o ADMIN). | Autenticado |
 
 ### Usuarios (`/api/usuarios`)
-| Método | Endpoint | Descripción |
-| :--- | :--- | :--- |
-| `POST` | `/api/usuarios/registro` | Registra un nuevo usuario en la plataforma. |
-| `GET` | `/api/usuarios` | Lista todos los usuarios registrados. |
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/usuarios/registro` | Registra un nuevo usuario en la plataforma. | Público |
+| `GET` | `/api/usuarios` | Lista todos los usuarios registrados. | Autenticado |
+| `GET` | `/api/usuarios/me` | Obtiene el perfil del usuario autenticado vía JWT. | Autenticado |
+| `DELETE` | `/api/usuarios/admin/{id}` | Elimina un usuario del sistema (solo rol ADMIN). | ADMIN |
 
 ### Carrito de Compras (`/api/carritos`)
-| Método | Endpoint | Descripción |
-| :--- | :--- | :--- |
-| `GET` | `/api/carritos/{usuarioId}` | Obtiene el carrito activo del usuario (lo crea si no existe). |
-| `POST` | `/api/carritos/{usuarioId}/items` | Agrega un ítem al carrito con validación de stock. |
-| `DELETE` | `/api/carritos/{usuarioId}/items/{itemId}` | Elimina un ítem específico del carrito. |
-| `DELETE` | `/api/carritos/{usuarioId}/vaciar` | Elimina todos los ítems del carrito. |
-| `POST` | `/api/carritos/{usuarioId}/checkout` | Confirma la compra, cierra el carrito y descuenta el stock. |
+| Método | Endpoint | Descripción | Acceso |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/carritos/{usuarioId}` | Obtiene el carrito activo del usuario (o lo inicializa). | Autenticado |
+| `POST` | `/api/carritos/{usuarioId}/items` | Agrega un ítem al carrito validando stock disponible. | Autenticado |
+| `DELETE` | `/api/carritos/{usuarioId}/items/{itemId}` | Elimina un ítem específico del carrito. | Autenticado |
+| `DELETE` | `/api/carritos/{usuarioId}/vaciar` | Vacía todos los ítems del carrito activo. | Autenticado |
+| `POST` | `/api/carritos/{usuarioId}/checkout` | Confirma la compra, cierra el carrito y descuenta stock. | Autenticado |
+
+---
+
+## Formato Estándar de Errores (JSON)
+Todas las excepciones capturadas por el `GlobalExceptionHandler` responden con el formato unificado `ApiErrorDTO`:
+```json
+{
+  "timestamp": "2026-10-12T14:20:00",
+  "status": 404,
+  "error": "Not Found",
+  "message": "No se encontró la casaca con id: 99",
+  "path": "/api/casacas/99"
+}
+```
 
 ---
 
@@ -102,4 +136,21 @@ Para iniciar el servidor de desarrollo, ejecutar en la raíz del proyecto:
 mvn spring-boot:run
 ```
 La aplicación iniciará en el puerto `8080` de manera predeterminada (`http://localhost:8080`).
+
+---
+
+## Usuarios de Prueba (Data Seeding)
+El sistema precarga automáticamente los siguientes usuarios en `DataInitializer`:
+
+| Email | Contraseña | Rol | Nombre |
+| :--- | :--- | :--- | :--- |
+| `admin@tucasaca.com` | `admin123` | `ADMIN` | Admin TuCasaca |
+| `ana.gomez@tucasaca.com` | `usuario123` | `USUARIO` | Ana Gomez |
+| `juan.perez@tucasaca.com` | `usuario123` | `USUARIO` | Juan Perez |
+| `sofia.lopez@tucasaca.com` | `usuario123` | `USUARIO` | Sofia Lopez |
+
+Para autenticarse, enviar una petición `POST /api/auth/login` con las credenciales y utilizar el token devuelto en los endpoints protegidos mediante el header HTTP:
+```http
+Authorization: Bearer <token>
+```
 

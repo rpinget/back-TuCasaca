@@ -6,20 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tucasaca.tienda.dto.LigaDTO;
+import com.tucasaca.tienda.exception.ResourceNotFoundException;
 import com.tucasaca.tienda.mapper.CasacaMapper;
 import com.tucasaca.tienda.repository.LigaRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class LigaService {
 
     private final LigaRepository ligaRepository;
     private final CasacaMapper casacaMapper;
-
-    public LigaService(LigaRepository ligaRepository, CasacaMapper casacaMapper) {
-        this.ligaRepository = ligaRepository;
-        this.casacaMapper = casacaMapper;
-    }
 
     public List<LigaDTO> getAllLigas() {
         return ligaRepository.findAll().stream()
@@ -30,6 +29,6 @@ public class LigaService {
     public LigaDTO getLigaById(Long id) {
         return ligaRepository.findById(id)
                 .map(casacaMapper::toLigaDTO)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró la liga con id: " + id));
     }
 }

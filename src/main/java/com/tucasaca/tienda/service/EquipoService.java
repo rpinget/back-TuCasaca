@@ -6,20 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.tucasaca.tienda.dto.EquipoDTO;
+import com.tucasaca.tienda.exception.ResourceNotFoundException;
 import com.tucasaca.tienda.mapper.CasacaMapper;
 import com.tucasaca.tienda.repository.EquipoRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EquipoService {
 
     private final EquipoRepository equipoRepository;
     private final CasacaMapper casacaMapper;
-
-    public EquipoService(EquipoRepository equipoRepository, CasacaMapper casacaMapper) {
-        this.equipoRepository = equipoRepository;
-        this.casacaMapper = casacaMapper;
-    }
 
     public List<EquipoDTO> getAllEquipos() {
         return equipoRepository.findAll().stream()
@@ -30,7 +29,7 @@ public class EquipoService {
     public EquipoDTO getEquipoById(Long id) {
         return equipoRepository.findById(id)
                 .map(casacaMapper::toEquipoDTO)
-                .orElse(null);
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el equipo con id: " + id));
     }
 
     public List<EquipoDTO> getEquiposByLiga(Long ligaId) {
