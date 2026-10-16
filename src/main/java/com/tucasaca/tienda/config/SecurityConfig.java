@@ -1,5 +1,8 @@
 package com.tucasaca.tienda.config;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,6 +32,10 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UsuarioRepository usuarioRepository;
+
+    // Orígenes permitidos para CORS, separados por coma (ej: http://localhost:5173,https://tucasaca.com)
+    @Value("${cors.allowed-origins:http://localhost:5173}")
+    private List<String> allowedOrigins;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -76,9 +83,9 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
-        config.setAllowedOriginPatterns(java.util.List.of("*"));
+        config.setAllowedOrigins(allowedOrigins);
         config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "X-Requested-With"));
+        config.setAllowedHeaders(java.util.List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         config.setAllowCredentials(true);
 
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
