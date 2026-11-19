@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.tucasaca.tienda.model.Role;
 import com.tucasaca.tienda.repository.UsuarioRepository;
 import com.tucasaca.tienda.security.JwtFilter;
+import com.tucasaca.tienda.security.RestSecurityErrorHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +33,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final UsuarioRepository usuarioRepository;
+    private final RestSecurityErrorHandler securityErrorHandler;
 
     // Orígenes permitidos para CORS, separados por coma (ej: http://localhost:5173,https://tucasaca.com)
     @Value("${cors.allowed-origins:http://localhost:5173}")
@@ -75,6 +77,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**", "/api/usuarios/admin/**").hasRole(Role.ADMIN.name())
                         // cualquier otra ruta requiere autenticación
                         .anyRequest().authenticated())
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(securityErrorHandler)
+                        .accessDeniedHandler(securityErrorHandler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
