@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorDTO> manejarCredencialesInvalidas(BadCredentialsException ex, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(buildError(HttpStatus.UNAUTHORIZED, "Credenciales inválidas", request));
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiErrorDTO> manejarUsuarioDeshabilitado(DisabledException ex, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(buildError(HttpStatus.UNAUTHORIZED, "El usuario está deshabilitado", request));
     }
 
     @ExceptionHandler(AuthenticationException.class)
