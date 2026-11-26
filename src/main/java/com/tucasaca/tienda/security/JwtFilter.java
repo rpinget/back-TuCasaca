@@ -9,6 +9,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -24,7 +25,21 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        // 1. Prioridad al header Authorization (clientes como Postman).
         String header = request.getHeader("Authorization");
+
+        // 2. Si no vino el header, busca el JWT en la cookie HttpOnly "access_token".
+        if (header == null) {
+            Cookie[] cookies = request.getCookies(); // puede ser null si no hay cookies
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (AuthCookieService.COOKIE_NAME.equals(cookie.getName())) {
+                        header = "Bearer " + cookie.getValue(); // lo adapta al formato que ya procesa el filtro
+                        break;
+                    }
+                }
+            }
+        }
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
